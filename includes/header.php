@@ -51,6 +51,15 @@ $theme = $_COOKIE['theme'] ?? 'dark';
       word-break: break-word;
     }
 
+    /* Responsive container */
+    .container {
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 15px;
+      box-sizing: border-box;
+    }
+
     /* Countdown styling */
     .countdown-timer {
       display: inline-flex;
