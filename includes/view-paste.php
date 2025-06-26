@@ -210,11 +210,11 @@ function time_ago($timestamp) {
                             </div>
 
                             <div id="paste-content" data-encrypted="<?= htmlspecialchars($paste['content']) ?>">
-                                <pre class="opacity-50"><code class="language-<?= htmlspecialchars($paste['language']) ?>"><?= '🔐 Encrypted content - add #zk=YOUR_KEY to URL to decrypt' ?></code></pre>
+                                <pre class="paste-body opacity-50"><code class="language-<?= htmlspecialchars($paste['language']) ?>"><?= '🔐 Encrypted content - add #zk=YOUR_KEY to URL to decrypt' ?></code></pre>
                             </div>
                         <?php else: ?>
                             <div id="paste-content">
-                                <pre><code class="language-<?= htmlspecialchars($paste['language']) ?>"><?= htmlspecialchars($paste['content']) ?></code></pre>
+                                <pre class="paste-body"><code class="language-<?= htmlspecialchars($paste['language']) ?>"><?= htmlspecialchars($paste['content']) ?></code></pre>
                             </div>
                         <?php endif; ?>
                     </div>

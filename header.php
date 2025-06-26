@@ -18,6 +18,15 @@ $theme = $_COOKIE['theme'] ?? 'dark';
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script>tailwind.config = { darkMode: 'class' };</script>
+    <style>
+        .paste-body {
+            overflow-x: auto;
+            max-width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            word-break: break-word;
+        }
+    </style>
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
 <nav class="bg-blue-600 dark:bg-blue-800 text-white shadow-lg fixed w-full z-10">
