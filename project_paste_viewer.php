@@ -166,13 +166,16 @@ $theme = $_COOKIE['theme'] ?? 'dark';
         .top-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             justify-content: flex-start;
         }
 
         @media (max-width: 480px) {
+            .top-buttons {
+                flex-direction: column;
+            }
             .top-buttons button {
-                flex: 1 1 100%;
+                width: 100%;
             }
         }
     </style>
