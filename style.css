@@ -45,3 +45,12 @@
     display: block;
   }
 }
+
+/* Responsive container */
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
