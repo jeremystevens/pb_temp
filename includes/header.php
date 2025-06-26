@@ -353,7 +353,7 @@ $theme = $_COOKIE['theme'] ?? 'dark';
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
   <!-- Modern Navigation Bar -->
-  <nav class="bg-blue-600 dark:bg-blue-800 text-white shadow-lg fixed w-full z-10">
+  <nav x-data="{ mobileMenu: false }" class="bg-blue-600 dark:bg-blue-800 text-white shadow-lg fixed w-full z-10">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16">
         <div class="flex items-center space-x-6">
@@ -361,7 +361,10 @@ $theme = $_COOKIE['theme'] ?? 'dark';
             <i class="fas fa-paste text-2xl"></i>
             <span class="text-xl font-bold">PasteForge</span>
           </a>
-          <div class="flex space-x-4">
+            <button @click="mobileMenu = !mobileMenu" class="lg:hidden p-2">
+              <i class="fas fa-bars"></i>
+            </button>
+          <div class="hidden lg:flex space-x-4">
             <a href="/" class="hover:bg-blue-700 px-3 py-2 rounded">Home</a>
             <a href="?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">Archive</a>
             <a href="/?page=projects" class="hover:bg-blue-700 px-3 py-2 rounded">Projects</a>
@@ -371,6 +374,16 @@ $theme = $_COOKIE['theme'] ?? 'dark';
               <a href="?page=about" class="hover:bg-blue-700 px-3 py-2 rounded">About</a>
             <?php endif; ?>
           </div>
+        </div>
+        <div x-show="mobileMenu" @click.away="mobileMenu = false" class="lg:hidden flex flex-col space-y-2 pb-4">
+          <a href="/" class="hover:bg-blue-700 px-3 py-2 rounded">Home</a>
+          <a href="?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">Archive</a>
+          <a href="/?page=projects" class="hover:bg-blue-700 px-3 py-2 rounded">Projects</a>
+          <?php if ($user_id): ?>
+            <a href="?page=collections" class="hover:bg-blue-700 px-3 py-2 rounded">Collections</a>
+          <?php else: ?>
+            <a href="?page=about" class="hover:bg-blue-700 px-3 py-2 rounded">About</a>
+          <?php endif; ?>
         </div>
         <div class="flex items-center space-x-4">
           <?php if ($user_id): ?>
