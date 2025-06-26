@@ -113,12 +113,20 @@ $theme = $_COOKIE['theme'] ?? 'dark';
       font-size: 0.9em;
     }
 
-    .meta-info .tag {
-      white-space: nowrap;
-      background: #2c2f33;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
+
+  .meta-info .tag {
+    white-space: nowrap;
+    background: #2c2f33;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* Responsive statistics grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+  }
 
   </style>
   <script>

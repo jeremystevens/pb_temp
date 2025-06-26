@@ -134,7 +134,7 @@ function time_ago($timestamp) {
             <div id="tab-content-overview" class="tab-content">
                 <div class="p-6">
                     <!-- Paste Statistics -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="stats-grid mb-6">
                         <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <div class="text-2xl font-bold text-gray-900 dark:text-white"><?= number_format($paste['views']) ?></div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Views</div>
