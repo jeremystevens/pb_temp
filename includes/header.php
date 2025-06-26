@@ -146,7 +146,7 @@ $theme = $_COOKIE['theme'] ?? 'dark';
       font-size: 1.1em;
     }
 
-    button {
+    button, .top-buttons button {
       padding: 10px;
       font-size: 1em;
     }
