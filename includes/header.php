@@ -51,6 +51,13 @@ $theme = $_COOKIE['theme'] ?? 'dark';
     code {
       word-break: break-word;
     }
+    .paste-body {
+      overflow-x: auto;
+      max-width: 100%;
+      word-break: break-word;
+      padding: 10px;
+      box-sizing: border-box;
+    }
 
     /* Responsive container */
     .container {
