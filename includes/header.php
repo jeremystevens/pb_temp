@@ -111,16 +111,16 @@ $theme = $_COOKIE['theme'] ?? 'dark';
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
-      font-size: 0.9em;
     }
 
-
-  .meta-info .tag {
-    white-space: nowrap;
-    background: #2c2f33;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
+    .meta-info .tag {
+      white-space: nowrap;
+      background: #2c2f33;
+      color: #9cdcfe;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.85em;
+    }
 
   /* Responsive statistics grid */
   .stats-grid {
