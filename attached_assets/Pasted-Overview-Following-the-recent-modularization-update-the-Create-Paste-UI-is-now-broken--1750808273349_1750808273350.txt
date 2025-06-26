@@ -1,0 +1,62 @@
+Overview:
+---------
+Following the recent modularization update, the "Create Paste" UI is now broken and incomplete. The key issue is that the top section (including the "+ Create New Paste", "Load Template", and "Import" buttons) is completely missing. In addition, core logic such as Zero-Knowledge encryption, submit behavior, and form grouping have been partially or fully removed.
+
+This breaks critical functionality and user experience that was working in the original version.
+
+Key Issues to Address:
+-----------------------
+1. **Header Action Buttons Missing**
+   - "+ Create New Paste"
+   - "Load Template"
+   - "Import"
+   These should appear above the Title input field, aligned right, inside a flex container.
+
+2. **Zero-Knowledge Encryption Behavior Missing**
+   - The encryption script should trigger on blur/focus-out of the content input area.
+   - It should encrypt text using the client-side JavaScript logic and insert the encryption key into the generated link or metadata.
+
+3. **Submit Button Does Not Create Paste**
+   - The submit logic that handles content creation on form submission appears to be broken or disconnected.
+   - Ensure the full JavaScript and server-side logic that receives and stores the paste is still intact.
+
+4. **Advanced Options and Fieldsets Misaligned**
+   - Language, expiration, visibility, tags, and password fields must be restored and styled using the original layout (flex rows, stacked spacing).
+
+Fix Instructions:
+-----------------
+1. Open `includes/main-content.php` or the file containing the paste creation form.
+2. Restore the full structure of the form section from the original `index.php` before modularization. Reference the second screenshot for layout and behavior.
+
+3. Specifically:
+   - Insert the top buttons inside a flex wrapper, e.g.:
+     <div class="container layout-between items-center section-header">
+       <a href="/" class="btn btn-primary">+ Create New Paste</a>
+       <div class="layout-inline gap-2">
+         <button class="btn btn-outline" onclick="loadTemplate()">Load Template</button>
+         <button class="btn btn-outline" onclick="importFromFile()">Import</button>
+       </div>
+     </div>
+
+4. Reconnect the original JS functionality:
+   - Zero-Knowledge encryption must still run via the original `paste.encrypt.js` or equivalent.
+   - Ensure the `onsubmit` handler still routes the form content to the appropriate PHP handling endpoint.
+
+5. Verify styling and structure:
+   - Form inputs should be grouped with `.layout-stack` and `.form-field` wrappers.
+   - Restore the original order and block layout:
+     Title > ZK Checkbox > Content Box > Advanced Options > Visibility > Password > Submit Button
+
+6. Confirm JavaScript imports are still included in the footer (`footer.php` or at bottom of `index.php`).
+   - Required scripts: ZK encryption logic, content handlers, language selectors, etc.
+
+Validation:
+-----------
+- Confirm the UI exactly matches the second screenshot layout.
+- Verify encryption fires correctly on blur and that the encryption key is handled.
+- Ensure a successful paste is created when the "Create Paste" button is clicked.
+- Test visibility toggles, expiration dropdown, and password protection.
+
+Conclusion:
+-----------
+This is a major regression that breaks critical functionality. All original "Create Paste" features must be fully restored from the original version before modularization. That includes layout, JS behavior, encryption, and submission.

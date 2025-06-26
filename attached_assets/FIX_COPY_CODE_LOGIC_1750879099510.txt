@@ -1,0 +1,76 @@
+📋 FIX COPY CODE BUTTON FUNCTIONALITY
+
+The current "Copy code" button needs enhancement to properly mimic the logic used in the Print button. Here's what to implement:
+
+✅ EXPECTED BEHAVIOR
+---------------------
+When the "Copy code" button is clicked:
+1. Check if the paste content is available and visible (i.e. not encrypted or missing the ZK key).
+2. If available:
+   - Copy the content area to the clipboard.
+   - Show a floating "Copied to clipboard" toast/notification near the button.
+   - The notification should automatically fade out after 2-3 seconds.
+3. If content is not available (e.g. zero-knowledge content not decrypted), show a warning like:
+   - "Content not available for copy."
+   - (Optional) Show this as a warning toast for a shorter duration (1.5 seconds).
+
+📦 FILES TO UPDATE
+-------------------
+- `includes/view-paste.php` → Ensure the `Copy Code` button has a unique ID (e.g. `copyPasteBtn`)
+- `assets/js/view-paste.js` or equivalent JS file → Add the updated logic below
+
+📜 SAMPLE JAVASCRIPT TO COPY CONTENT
+
+```js
+document.addEventListener('DOMContentLoaded', () => {
+  const copyBtn = document.getElementById('copyPasteBtn');
+  const contentBlock = document.querySelector('.paste-content pre, #pasteContentText');
+
+  if (copyBtn && contentBlock) {
+    copyBtn.addEventListener('click', () => {
+      const content = contentBlock.innerText || contentBlock.textContent;
+
+      if (!content || content.includes("Encrypted content")) {
+        showToast("Content is not available or encrypted", "error");
+        return;
+      }
+
+      navigator.clipboard.writeText(content).then(() => {
+        showToast("Copied to clipboard ✅", "success");
+      }).catch(() => {
+        showToast("Copy failed", "error");
+      });
+    });
+  }
+});
+
+function showToast(message, type = "info") {
+  const toast = document.createElement("div");
+  toast.textContent = message;
+  toast.className = `copy-toast ${type}`; // style with CSS
+
+  Object.assign(toast.style, {
+    position: 'fixed',
+    bottom: '30px',
+    right: '30px',
+    padding: '10px 16px',
+    background: type === "error" ? "#ff4d4f" : "#4caf50",
+    color: "#fff",
+    borderRadius: "5px",
+    zIndex: 1000,
+    fontSize: "14px"
+  });
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 2500);
+}
+```
+
+🎨 OPTIONAL UI IMPROVEMENTS
+----------------------------
+- Change the copy icon from 📋 to ✅ briefly on success.
+- Animate the toast (e.g., fade in/out).
+- Highlight the content area for 1 second after copying.
+
+This will make the Copy Code functionality consistent, user-friendly, and reliable.

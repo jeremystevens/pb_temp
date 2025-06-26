@@ -1,0 +1,58 @@
+
+TO: Replit Team
+SUBJECT: Persistent SQL Datatype Mismatch – Final Debug with Field Dump
+
+Overview:
+---------
+The SQL error persists at line 129 despite updates:
+
+  SQLSTATE[HY000]: General error: 20 datatype mismatch
+  File: index.php Line: 129
+
+This suggests that one or more values passed to the SQL statement still do not match their declared types in the database schema. We need to definitively confirm each variable’s value and type before execution.
+
+Instructions:
+-------------
+
+1. **Insert a Diagnostic Dump Before Line 129**
+
+Add the following code *immediately before* the SQL `$stmt->execute([...])` line:
+
+```php
+var_dump([
+  'paste_id' => $paste_id,
+  'user_id' => $user_id,
+  'title' => $title,
+  'content' => $content,
+  'language' => $language,
+  'password' => $password,
+  'expire_time' => $expire_time,
+  'is_public' => $is_public,
+  'burn_after_read' => $burn_after_read,
+  'zero_knowledge' => $zero_knowledge,
+  'created_at' => $created_at
+]);
+exit;
+```
+
+This will display all values and types being inserted, helping us spot any incorrect types, NULLs, or unexpected strings.
+
+2. **Check the Schema for `pastes` Table**
+
+Please confirm that `user_id` can be NULL in your schema. If it is `NOT NULL`, and we’re passing NULL, this will trigger a failure.
+
+Also verify:
+- `expire_time` and `created_at` are INTEGER
+- All boolean-like values (`is_public`, `burn_after_read`, `zero_knowledge`) are integers (`0` or `1`)
+
+3. **Match Field Count and Order**
+
+Ensure that the number and order of values in `$stmt->execute([...])` matches exactly the column names in the `INSERT INTO` clause.
+
+Validation:
+-----------
+Once the dump is printed, any type or value mismatch will be clearly visible. Please share the dumped output if the issue persists after this check.
+
+Conclusion:
+-----------
+This diagnostic step is critical to isolate the final source of the datatype mismatch and permanently resolve the SQL error.

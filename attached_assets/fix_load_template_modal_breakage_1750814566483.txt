@@ -1,0 +1,43 @@
+
+TO: Replit Team
+SUBJECT: Load Template Modal Not Showing After JS Edits – Please Restore Modal Trigger
+
+Overview:
+---------
+Thank you for restoring the Advanced Options toggle. That’s working correctly now.
+
+However, the recent changes to `paste-form.js` appear to have broken the Load Template functionality. The modal no longer opens when clicking the "Load Template" button, which previously worked.
+
+Issue:
+------
+- Clicking the "Load Template" button no longer opens the modal.
+- This was working before the recent JS and PHP fixes.
+- The modal markup still exists, so the issue is likely with the event listener or export/import.
+
+Required Fix:
+-------------
+1. Re-check the `paste-form.js` file:
+   - Ensure it contains the `loadTemplateModal()` or equivalent function that triggers modal visibility.
+   - Ensure this function is bound to the button's `onclick` event correctly.
+
+2. Reconnect the modal open handler:
+   - The "Load Template" button should call `loadTemplateModal()` or dispatch a modal open event on click.
+   - Example:
+     ```javascript
+     document.getElementById("load-template-btn").addEventListener("click", loadTemplateModal);
+     ```
+
+3. Confirm that the modal is still in the DOM and is hidden via class or style (not removed entirely).
+
+4. Make sure the modal JS is loaded **after** the DOM is ready.
+   - Wrap in `DOMContentLoaded` or ensure it's loaded at the end of the body.
+
+Validation:
+-----------
+- Click "Load Template" → modal should appear.
+- Modal buttons should remain functional (language selection, load, close).
+- Confirm modal logic is not conflicting with `paste-form.js` refactors.
+
+Conclusion:
+-----------
+The Load Template modal broke after resolving unrelated issues. Please restore its event binding and visibility behavior so users can select a language again.

@@ -1,0 +1,63 @@
+
+TO: Replit Team
+SUBJECT: Restore Full Paste View Page with All Original Functionality (from index-backup.php)
+
+Overview:
+---------
+The current modularized paste view page (view-paste.php) is missing the full design and features that were present in the original layout (from index-backup.php).
+
+⚠️ It is CRITICAL that the paste view page is restored EXACTLY as it was in the original site, with ALL functionality working as it originally did — both frontend and backend.
+
+--------------------------------------------------------
+REQUIRED IMPLEMENTATION STEPS:
+--------------------------------------------------------
+
+1. MIGRATE LOGIC FROM index-backup.php
+- Restore all PHP logic used to retrieve and display:
+  - Paste metadata (title, author, date, views)
+  - Content (with syntax highlighting)
+  - Statistics: views, likes, characters, lines, size, etc.
+  - Zero-knowledge handling
+  - Burn-after-read logic
+  - Password protection check
+  - Forking, chaining, versioning data
+
+2. UPDATE includes/view-paste.php
+- Move the complete paste rendering logic into this file
+- Use $_GET['view'] or clean URLs to resolve paste_id
+- Display the correct paste record and content using new routing logic
+
+3. ENSURE TEMPLATE INCLUDES ALL UI SECTIONS
+- Restore navigation tabs: Overview, Comments, Discussions
+- Add supporting tab content containers (even if placeholders)
+- AI summary section placeholder (if not functional yet)
+- Tags or related pastes logic if it existed in original
+
+4. RESTORE ALL FUNCTIONAL BUTTONS
+- Copy to Clipboard
+- View Raw
+- Download
+- Clone
+- Fork
+- Report
+- Print
+
+5. HANDLE EXPIRATION AND TIME FORMATTING
+- Countdown timer should display real-time expiry (in JS)
+- Time since creation should read as "just now", "5 mins ago", "3 days ago", "1 year ago", etc.
+
+6. ENSURE COMPATIBILITY WITH:
+- New paste_id (custom string IDs)
+- SQLite schema (check field names)
+- Modular includes (header/footer/sidebar)
+
+7. VALIDATE ON FRONTEND
+- Test normal, expired, passworded, and zero-knowledge pastes
+- Confirm layout is fully restored visually and functionally
+
+--------------------------------------------------------
+Conclusion:
+--------------------------------------------------------
+This paste view page is one of the most important features of the platform and must be restored to FULL parity with the original version (as shown in index-backup.php and screenshot references). All visual components, interactive buttons, and backend logic must be included.
+
+Please prioritize fidelity and completeness.

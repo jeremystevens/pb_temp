@@ -1,0 +1,57 @@
+
+TO: Replit Team
+SUBJECT: Restore Paste Viewing Page (Using Custom paste_id)
+
+Overview:
+---------
+In the new implementation, users can create pastes with custom `paste_id` values (e.g., `kjAzhSUG`) rather than referencing the internal database `id`. We now need to restore the paste view functionality — the page users land on when they click a paste in the sidebar or from the archive.
+
+This should faithfully replicate the look and behavior of the original `index-backup.php`, but using the new paste_id routing system.
+
+Required Fixes:
+---------------
+
+1. **Create New Paste View Page**
+   - Create a file like `view.php` or add a case to `index.php` for `?view=<paste_id>`
+   - Extract and reuse the paste display layout and markup from `index-backup.php`
+
+2. **Route by paste_id Instead of id**
+   - Update SQL query to:
+     ```php
+     $stmt = $pdo->prepare("SELECT * FROM pastes WHERE paste_id = ?");
+     $stmt->execute([$paste_id]);
+     $paste = $stmt->fetch();
+     ```
+
+3. **Fallback for Not Found**
+   - If `$paste` is `false`, show a "Paste Not Found" message
+
+4. **Apply Legacy Display Features**
+   - Paste title
+   - Paste content with code styling (e.g., `<pre><code>`)
+   - Language label
+   - Expiration info (countdown)
+   - Zero-knowledge message if applicable
+   - Burn-after-read logic (delete after view if enabled)
+
+5. **Add Routing Support**
+   - In `index.php`, check for:
+     ```php
+     if (isset($_GET['view'])) {
+         include 'includes/view-paste.php';
+         exit;
+     }
+     ```
+
+6. **Update Sidebar / Archive Paste Links**
+   - Ensure all paste links now point to:
+     ```html
+     <a href="?view=<paste_id>">View</a>
+     ```
+
+7. **Track View Uniqueness (Optional)**
+   - Only increment views when a valid paste is viewed by a unique IP (as previously outlined)
+
+Conclusion:
+-----------
+This ensures pastes are viewable again using the new short ID system while restoring all the original UX and formatting. Please retain the behavior and styles from `index-backup.php` while updating the logic to work with the modular layout and custom IDs.

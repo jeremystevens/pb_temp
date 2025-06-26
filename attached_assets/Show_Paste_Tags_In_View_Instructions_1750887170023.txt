@@ -1,0 +1,38 @@
+
+📝 Feature Update: Display Paste Tags on Paste View Page
+
+🎯 Objective:
+Update the paste view layout to display all associated tags underneath the paste metadata (next to author, time, views, language), similar to how they appear in the legacy view.
+
+📍 Implementation Steps:
+
+1. 🔍 Retrieve Tags:
+   - Ensure that the `tags` column is already being fetched with the paste data in `index.php` or equivalent backend logic.
+   - Tags are typically stored as a comma-separated string.
+
+2. 🧠 Parse Tags:
+   - In the view-paste.php (or wherever the paste view HTML is rendered), parse the tags string using PHP's `explode(',', $paste['tags'])`.
+
+3. 💡 Display Tags:
+   - Add the following block under the existing metadata layout:
+     ```php
+     <div class="mt-2 flex flex-wrap gap-2">
+         <?php foreach (explode(',', $paste['tags']) as $tag): ?>
+             <?php if (trim($tag)): ?>
+                 <span class="bg-gray-700 text-white text-xs px-2 py-1 rounded">#<?= htmlspecialchars(trim($tag)) ?></span>
+             <?php endif; ?>
+         <?php endforeach; ?>
+     </div>
+     ```
+
+4. ✅ Positioning:
+   - The tag block should appear immediately after or beside the metadata bar, consistent with previous design (see attached screenshot 2.png).
+
+5. 🎨 Style:
+   - Make sure the tag styling is visually balanced with the rest of the UI (small text, rounded background, muted but readable color).
+
+📌 Notes:
+- Ensure this works with both light and dark themes.
+- Sanitize all tag output with `htmlspecialchars()` to prevent XSS.
+
+📷 Refer to screenshots `1.png` (current view) and `2.png` (expected outcome).

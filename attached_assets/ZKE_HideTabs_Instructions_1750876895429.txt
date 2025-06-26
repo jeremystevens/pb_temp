@@ -1,0 +1,87 @@
+
+🔐 Zero-Knowledge Paste Privacy Enhancement Instructions
+=======================================================
+
+Goal:
+-----
+Prevent metadata leaks on Zero-Knowledge Encryption (ZKE) pastes by hiding the Comments and Discussions tabs if the decryption key is not present in the URL (as a #zk= fragment).
+
+Behavior:
+---------
+- For regular pastes, everything works normally.
+- For ZKE pastes:
+  - If the URL contains `#zk=<key>`, all tabs are visible.
+  - If the URL does NOT contain the `#zk=` fragment, hide:
+    - Comments tab
+    - Discussions tab
+
+Implementation Instructions:
+============================
+
+1. Detect Zero-Knowledge Flag in PHP
+-------------------------------------
+In `index.php` or `view-paste.php`, expose the `zero_knowledge` flag into the frontend JavaScript environment:
+
+```php
+<script>
+    window.PASTE_CONFIG = {
+        isZeroKnowledge: <?= $paste['zero_knowledge'] ? 'true' : 'false' ?>,
+    };
+</script>
+```
+
+2. Frontend JavaScript Logic
+-----------------------------
+In `view-paste.js` (or whichever JS file handles tab rendering):
+
+```js
+document.addEventListener("DOMContentLoaded", () => {
+    const zkKeyPresent = window.location.hash.includes("#zk=");
+    const isZeroKnowledge = window.PASTE_CONFIG?.isZeroKnowledge;
+
+    if (isZeroKnowledge && !zkKeyPresent) {
+        // Hide the tabs
+        const commentsTab = document.querySelector('[data-tab="comments"]');
+        const discussionsTab = document.querySelector('[data-tab="discussions"]');
+        
+        if (commentsTab) commentsTab.style.display = "none";
+        if (discussionsTab) discussionsTab.style.display = "none";
+
+        // Optionally remove their content panels
+        const commentsPanel = document.getElementById("comments-panel");
+        const discussionsPanel = document.getElementById("discussions-panel");
+
+        if (commentsPanel) commentsPanel.remove();
+        if (discussionsPanel) discussionsPanel.remove();
+    }
+});
+```
+
+Optional UI Enhancements:
+=========================
+
+1. Overview Notice:
+-------------------
+If tabs are hidden due to missing #zk= key, show a notice in the Overview panel:
+
+```html
+<div class="notice info">
+    🔐 Comments are disabled for Zero-Knowledge pastes unless the decryption key is provided.
+</div>
+```
+
+2. Tab Placeholders (Optional):
+-------------------------------
+If you want to show the tabs but prevent access:
+
+```html
+<li class="tab disabled" title="Decryption key required">
+    <i class="fas fa-lock"></i> Comments
+</li>
+```
+
+And style it in CSS with blur or disabled appearance.
+
+Security Notes:
+---------------
+This ensures users can't glean sensitive info from comments/discussions if they lack the key — maintaining true end-to-end confidentiality.

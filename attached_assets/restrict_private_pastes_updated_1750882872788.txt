@@ -1,0 +1,55 @@
+🔐 Enforcing Visibility Restrictions for Private Pastes
+
+Objective:
+Ensure only authenticated (logged-in) users can create private pastes. Anonymous users should only be able to choose between Public and Unlisted.
+
+Steps for Implementation:
+
+1. **Frontend Update (Form Behavior in main-content.php or JS Module):**
+   - Locate the visibility radio group: Public, Unlisted, Private.
+   - Add a check using a session/auth variable (e.g., `isLoggedIn`).
+   - If the user is NOT logged in:
+     - Disable the "Private" radio button.
+     - Add a tooltip/message (e.g., "Login required to make paste private").
+     - Optional UX: Add a lock icon or grayed-out style to emphasize inaccessibility.
+
+   ```html
+   <input type="radio" name="visibility" value="private" id="private" disabled>
+   <label for="private" title="Login required to select Private">Private 🔒</label>
+   ```
+
+   ```javascript
+   if (!window.isLoggedIn) {
+       document.getElementById('private').disabled = true;
+   }
+   ```
+
+2. **Backend Safeguard in index.php:**
+   - Inside the POST logic where the form is processed, check if:
+     - `visibility == 'private'` AND user is NOT authenticated.
+   - If true:
+     - Either override to `unlisted` or `public`
+     - OR reject the submission with an error
+
+   ```php
+   if ($_POST['visibility'] === 'private' && !$user_id) {
+       // Option 1: Override to unlisted
+       $_POST['visibility'] = 'unlisted';
+
+       // Option 2 (alternative): Reject with an error
+       // $error = "Login required to create a private paste.";
+       // return;
+   }
+   ```
+
+3. **Optional UI Suggestion:**
+   - If a user attempts to select "Private" without logging in, show a popup or inline message:
+     - "Private pastes are only available to registered users. Please login or register."
+
+Outcome:
+Anonymous users are prevented from selecting or submitting private pastes, ensuring only authenticated users can create them.
+
+🔧 UI Enhancement:
+Next to the 'Private' radio option on the form, display a small label in grey text:
+“(Registered users only)”
+You can place this directly beside the option or below it in a muted font style to indicate availability.

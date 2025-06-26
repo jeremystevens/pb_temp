@@ -1,0 +1,53 @@
+
+TO: Replit Team
+SUBJECT: Fix View Counting Logic for Pastes (IP-based, not preview-based)
+
+Overview:
+---------
+Currently, the view count shown next to each paste increments on page render — even in the sidebar listing. This results in inflated and misleading view numbers.
+
+In the original implementation (`index-backup.php`), views were counted per-IP **only** when the full paste page was actually visited.
+
+Required Fixes:
+---------------
+
+1. **Only Count Views on Full Paste View Page**
+   - Do not increment view counts on the home/archive pages or sidebar.
+   - Views should only increment when a user navigates to the individual paste page (e.g. `/paste/kjAzhSUG` or `?paste_id=...`).
+
+2. **Use IP Address to Restrict Duplicate Views**
+   - In the original version, the `$_SERVER['REMOTE_ADDR']` IP was tracked to ensure 1 view per IP per paste.
+   - Reimplement this logic using:
+     ```php
+     $ip = $_SERVER['REMOTE_ADDR'];
+     $paste_id = $_GET['paste_id'];
+
+     $alreadyViewed = $pdo->prepare("SELECT 1 FROM paste_views WHERE paste_id = ? AND ip_address = ?");
+     $alreadyViewed->execute([$paste_id, $ip]);
+
+     if (!$alreadyViewed->fetch()) {
+         $recordView = $pdo->prepare("INSERT INTO paste_views (paste_id, ip_address, viewed_at) VALUES (?, ?, ?)");
+         $recordView->execute([$paste_id, $ip, time()]);
+
+         $updateCount = $pdo->prepare("UPDATE pastes SET views = views + 1 WHERE paste_id = ?");
+         $updateCount->execute([$paste_id]);
+     }
+     ```
+
+   - This requires a new table:
+     ```sql
+     CREATE TABLE paste_views (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       paste_id TEXT,
+       ip_address TEXT,
+       viewed_at INTEGER
+     );
+     ```
+
+3. **Avoid Bots and Refresh Spam**
+   - Optionally, use headers or a JS cookie to flag human traffic.
+   - Consider limiting 1 view per IP per X hours if stricter deduplication is needed.
+
+Conclusion:
+-----------
+View counts should reflect legitimate, unique user views — not sidebar impressions. Please restrict view logic to the full paste view and track per-IP using a lightweight table or caching method.

@@ -1,0 +1,33 @@
+
+TO: Replit Team
+SUBJECT: URGENT – Missing paste_id Column Causes SQL Error
+
+Overview:
+---------
+A fatal SQL error is occurring when attempting to create a new paste:
+
+  SQLSTATE[HY000]: General error: 1 no such column: paste_id
+  File: index.php, Line: 25
+
+This confirms the table `pastes` does not yet include the column `paste_id`, which is being referenced in a SELECT query and an INSERT statement.
+
+Required Fix:
+-------------
+Run the following SQL command immediately in the SQLite environment:
+
+```sql
+ALTER TABLE pastes ADD COLUMN paste_id TEXT UNIQUE;
+```
+
+Optional but Recommended:
+```sql
+CREATE UNIQUE INDEX idx_paste_id ON pastes(paste_id);
+```
+
+Why This Is Required:
+---------------------
+The new version of the codebase is using `paste_id` as a short, shareable public identifier for each paste. This replaces reliance on the internal `id` field for public-facing routing and identification.
+
+Conclusion:
+-----------
+This single schema change will resolve the current error and enable the paste creation functionality to work as intended using the new system.

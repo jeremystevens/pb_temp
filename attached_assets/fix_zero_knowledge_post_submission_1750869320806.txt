@@ -1,0 +1,61 @@
+
+TO: Replit Team
+SUBJECT: Correct the Post-Submission Flow for Zero-Knowledge Pastes (Client-Side Encryption)
+
+Overview:
+---------
+The Zero-Knowledge paste creation form works correctly on the new modularized layout — the encryption checkbox is present and the content is encrypted before being sent to the server.
+
+However, the **post-submission flow** is currently incorrect. This functionality must exactly replicate the original behavior.
+
+It is critical that **Steps 3 to 5 below are restored properly**, exactly as in the previous implementation.
+
+---------------------------------------
+REQUIRED IMPLEMENTATION DETAILS:
+---------------------------------------
+
+✅ Step 3: Submission Process (in Browser)
+-----------------------------------------
+- When the user clicks “Create Paste” with Zero-Knowledge enabled:
+  - A visual loading indicator should appear: “Encrypting content…”
+  - Encryption must be performed entirely client-side (as currently handled by existing JS logic)
+  - The encrypted payload should be submitted via standard POST to `index.php`
+  - NO encryption key should be sent to the server — only encrypted text
+
+✅ Step 4: Success Response + URL Generation
+-------------------------------------------
+- After the paste is saved server-side:
+  - Server should return ONLY the paste ID (not the key)
+  - The frontend JS should combine:
+    - Paste ID (e.g. `abc123`)
+    - Encryption Key from client
+  - And build a full view URL like:
+    `https://domain.com/abc123#zk=<encryption-key>`
+
+- Display a success message that reads:
+  “✅ Zero-Knowledge paste created! Save this URL – it contains your decryption key.”
+
+- Also display:
+  “🔐 This URL is required to view the paste. We cannot recover it if lost.”
+
+- Add a "Copy URL" button that copies the full link to clipboard
+
+✅ Step 5: Immediate Paste View + Decryption
+-------------------------------------------
+- Redirect the user to the view page (e.g. `/abc123#zk=<key>`)
+- Ensure the `paste-form.js` (or similar) handles client-side decryption upon page load:
+  - Grab the hash key from the `location.hash`
+  - Decrypt the paste content
+  - Replace the placeholder with decrypted text
+- Visual cues should include:
+  - "Encrypted Paste" badge or icon
+  - Tooltip or message explaining this is a Zero-Knowledge paste
+
+🔐 Notes:
+---------
+- This behavior is **mission-critical** to privacy promises of the platform.
+- The encryption key MUST NEVER be logged, stored, or sent to the server.
+- This logic was fully functional in the original `index-backup.php` and associated JS files.
+
+-------------------------------
+Please ensure ALL of these behaviors are restored EXACTLY as before, with matching UI messages and encryption logic.

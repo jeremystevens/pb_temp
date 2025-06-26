@@ -1,0 +1,41 @@
+SUBJECT: UI Layout Regression – Header Controls Render Outside Container
+
+Overview:
+---------
+There is a visual bug in the paste creation form: the top action buttons (`+ Create New Paste`, `Load Template`, `Import`) are rendering outside the container or header bar where they belong. This is clearly visible when comparing the two attached screenshots.
+
+Expected Behavior:
+------------------
+- All top controls should be aligned inside a container or flex parent that centers or right-aligns them within the layout bounds.
+- These controls should follow consistent spacing and padding as seen in the original version.
+
+Issue:
+------
+- The current layout likely renders these buttons outside the intended wrapper `<div>`, or without `container`, `layout-between`, or `section-header` class bindings.
+- This may have occurred during modularization or restructuring of `header.php`.
+
+Fix Instructions:
+-----------------
+1. Open `includes/header.php` or wherever the top nav/buttons are defined.
+2. Wrap the control buttons (`Create New Paste`, `Load Template`, `Import`) inside a div with proper container and alignment classes.
+
+   Required Structure:
+   - Use a class like:
+     <div class="container layout-between items-center section-header">
+   - Inside that div, position the controls to float-right or justify-end if using flex.
+   - Ensure consistent padding and spacing using layout or spacing utility classes (e.g. `px-4`, `gap-4`, etc.)
+
+3. Verify the header is not:
+   - Positioned absolutely or outside the page flow
+   - Floating above the form or leaking into unrelated layout sections
+
+4. Ensure this container is within the responsive grid or main layout wrapper so it scales properly.
+
+Validation:
+-----------
+- After fixing the header layout, test at multiple screen widths (mobile, tablet, desktop).
+- All three buttons should remain inside the top section, correctly aligned and responsive.
+
+Conclusion:
+-----------
+This misalignment makes the UI look broken and unstructured. Please re-wrap the control buttons inside their proper layout container to restore the original header format as shown in the second screenshot.

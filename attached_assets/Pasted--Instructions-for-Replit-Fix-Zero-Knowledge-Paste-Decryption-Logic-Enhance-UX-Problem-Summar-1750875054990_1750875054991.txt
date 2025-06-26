@@ -1,0 +1,93 @@
+✅ Instructions for Replit: Fix Zero-Knowledge Paste Decryption Logic + Enhance UX
+
+🔧 Problem Summary
+Currently, when a user visits a Zero-Knowledge paste (e.g. /abc123#zk=xyz), they see both:
+- ✅ A success banner stating “Content decrypted successfully”
+- ❌ A failure message that says “Decryption failed” and “Key required”
+
+This creates logical contradiction and user confusion.
+
+🔨 What to Fix
+
+1. Ensure Decryption Validation Before Displaying Messages
+----------------------------------------------------------
+Update your JavaScript logic responsible for Zero-Knowledge decryption to:
+- ✅ Only show the “Content decrypted successfully” banner AFTER decryption succeeds.
+- ❌ Only show the decryption failure message if decryption fails.
+
+Suggested JS logic:
+
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash;
+  const keyMatch = hash.match(/#zk=([\w\d]+)/);
+  const statusBanner = document.querySelector('#zk-success');
+  const failBanner = document.querySelector('#zk-failure');
+  const pasteBox = document.querySelector('#paste-content');
+  const timerEl = document.querySelector('#zk-decrypt-timer');
+
+  if (keyMatch && pasteBox) {
+    const key = keyMatch[1];
+    const encrypted = pasteBox.dataset.encrypted;
+
+    try {
+      const start = performance.now();
+      const decrypted = decryptAES(encrypted, key);
+
+      if (decrypted) {
+        pasteBox.textContent = decrypted;
+        if (statusBanner) statusBanner.style.display = 'block';
+        if (failBanner) failBanner.style.display = 'none';
+
+        const end = performance.now();
+        if (timerEl) timerEl.textContent = `Decrypted in ${Math.round(end - start)}ms`;
+
+        const badge = document.createElement('span');
+        badge.innerHTML = 'Decrypted client-side 🔐';
+        badge.className = 'ml-2 text-green-500 text-xs font-semibold';
+        statusBanner?.appendChild(badge);
+
+        const pre = document.createElement('pre');
+        pre.textContent = decrypted;
+        pre.className = 'bg-gray-800 text-white p-3 rounded mt-4';
+        pasteBox.replaceWith(pre);
+      } else {
+        throw new Error('Empty result');
+      }
+
+    } catch (e) {
+      if (statusBanner) statusBanner.style.display = 'none';
+      if (failBanner) failBanner.style.display = 'block';
+    }
+  }
+});
+
+2. HTML Adjustments
+-------------------
+Add these IDs to your view template:
+
+<div id="zk-success" class="hidden">Content decrypted successfully</div>
+<div id="zk-failure" class="hidden">Decryption failed...</div>
+<span id="zk-decrypt-timer" class="text-xs ml-2 text-gray-400"></span>
+
+Paste container example:
+<div id="paste-content" data-encrypted="{{paste.content}}">
+  This is an encrypted paste. Decryption key required.
+</div>
+
+📋 Additional Enhancements
+--------------------------
+✅ Show Paste Decryption Time:
+- Display using the #zk-decrypt-timer span.
+
+🔒 Add “Decrypted Client-Side” Badge:
+- JavaScript adds: "Decrypted client-side 🔐" next to the banner.
+
+📄 Use <pre> For Decrypted Content:
+- Render decrypted text inside a <pre> block for formatting and copyability.
+
+✅ Result
+--------
+- Correct banner visibility
+- Client-side security badge
+- Decrypted content presented cleanly
+- Clear, error-free UX for Zero-Knowledge paste views.

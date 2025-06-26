@@ -1,0 +1,91 @@
+**Fix Instructions for Replit: Zero-Knowledge Copy & Decryption Issues**
+
+---
+
+## 1. ✅ Fix Copy Button + Notification
+
+### Problem:
+The clipboard button on the Zero-Knowledge success modal does not copy the URL and shows no visual feedback.
+
+### Solution:
+
+#### In your JavaScript (likely `paste-form.js` or wherever the modal logic lives):
+
+Find the button with the clipboard icon and ensure it has a unique ID, e.g.:
+```html
+<button id="copyZkUrlBtn" class="..."><i class="fas fa-copy"></i></button>
+```
+
+Then add the following logic at the bottom of the modal setup function:
+```js
+document.getElementById('copyZkUrlBtn').addEventListener('click', () => {
+  const url = document.getElementById('zkFullUrl').value;
+  navigator.clipboard.writeText(url).then(() => {
+    // Show toast or feedback (Bootstrap, Tailwind Toast, or custom)
+    alert('Copied to clipboard!');  // Replace with toast if styled
+  }).catch(err => {
+    console.error('Copy failed:', err);
+    alert('Failed to copy.');
+  });
+});
+```
+
+Make sure the text input that holds the full URL has the ID:
+```html
+<input type="text" id="zkFullUrl" ... />
+```
+
+---
+
+## 2. 🔐 Fix Decryption of Zero-Knowledge Paste
+
+### Problem:
+Even with the `#zk=...` fragment in the URL, the paste remains encrypted when viewing.
+
+### Explanation:
+The decryption must happen **client-side** *after page load* using the key in the URL fragment.
+
+### Fix Strategy:
+
+#### A. In `view-paste.php` or the page that renders a paste:
+Make sure you render the paste content inside a container with a unique ID like:
+```html
+<pre id="paste-content" data-encrypted="true"><?= htmlspecialchars($paste['content']) ?></pre>
+```
+
+#### B. In your JS (`paste-view.js` or included in the page):
+```js
+document.addEventListener('DOMContentLoaded', () => {
+  const contentElement = document.getElementById('paste-content');
+  if (contentElement && contentElement.dataset.encrypted === "true") {
+    const fragment = window.location.hash;
+    const match = fragment.match(/#zk=([A-Za-z0-9+/=]+)/);
+    if (!match) return;
+
+    const key = match[1];
+    try {
+      const encrypted = contentElement.textContent;
+      const decrypted = atob(encrypted);  // Replace with real decryption if used
+      contentElement.textContent = decrypted;
+      contentElement.dataset.encrypted = "false";
+    } catch (err) {
+      console.error("Decryption failed", err);
+      contentElement.textContent = "[Decryption Failed]";
+    }
+  }
+});
+```
+
+> ✅ Replace `atob()` with your actual AES/GCM or SJCL decrypt logic if encryption was stronger.
+
+---
+
+## Optional Improvements
+
+- Replace `alert()` with a styled Tailwind toast or Bootstrap toast.
+- Add animation to modal when copy succeeds.
+- Auto-hide the copy modal after success (optional).
+
+---
+
+✅ These changes will complete the original Zero-Knowledge experience and fix the broken copy functionality and missing decryption behavior.

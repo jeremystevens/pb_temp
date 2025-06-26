@@ -1,0 +1,71 @@
+
+TO: Replit Team
+SUBJECT: Fix Post-Creation Redirect and Sidebar Paste View Navigation
+
+Overview:
+---------
+We have multiple broken behaviors after submitting a paste and navigating from the sidebar:
+
+1. ❌ User is NOT redirected after clicking "Create Paste"
+2. ❌ Generated URL is still: /abc123?id=abc123
+3. ❌ Clicking a paste from the sidebar does not open the paste view — it remains stuck on the create form
+
+These issues need to be addressed together.
+
+------------------------------------------------------------
+✅ FIX #1 — Redirect After Paste Creation Must Work
+------------------------------------------------------------
+In `index.php` (or wherever the form POST is handled), after the paste is successfully created:
+
+1. Ensure this redirect line exists:
+```php
+header("Location: /{$paste_id}");
+exit;
+```
+
+2. The `exit;` is CRITICAL — without it, PHP will continue and render the wrong content.
+
+------------------------------------------------------------
+✅ FIX #2 — Remove Redundant Query String From Paste URLs
+------------------------------------------------------------
+Anywhere links to pastes are generated (e.g., sidebar, archive):
+
+Current:
+```php
+<a href="/<?= $paste_id ?>?id=<?= $paste_id ?>">
+```
+
+Fix:
+```php
+<a href="/<?= $paste_id ?>">
+```
+
+This includes:
+- Sidebar pastes
+- Archive/index listings
+- Post-submission success message
+
+------------------------------------------------------------
+✅ FIX #3 — Make Sure View Mode Triggers Correctly on Paste Load
+------------------------------------------------------------
+The router in `index.php` must correctly detect when a paste is being viewed.
+
+Example logic:
+```php
+if (isset($_GET['view'])) {
+  // This is a view paste request
+  include 'includes/view-paste.php';
+  exit;
+}
+```
+
+Also ensure that the `.htaccess` is working and rewriting `/abc123` to:
+```
+index.php?view=abc123
+```
+
+------------------------------------------------------------
+Once these are fixed:
+- Submitting a paste should redirect to the correct clean URL
+- Sidebar clicks should load the paste viewer
+- No more `?id=` in any URLs

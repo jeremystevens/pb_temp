@@ -1,0 +1,40 @@
+Overview:
+---------
+You've successfully extracted the main layout structure into modular components:
+- includes/header.php
+- includes/sidebar.php
+- includes/main-content.php
+- includes/footer.php
+
+However, `index.php` has not yet been updated to actually use these includes. The diff shows +0 / -0, meaning no edits were made. This step is essential to complete the modularization process.
+
+Instructions:
+-------------
+Please update `index.php` to use the new modular structure by replacing the full-page HTML structure with the following includes:
+
+<?php include 'includes/header.php'; ?>
+<?php include 'includes/sidebar.php'; ?>
+<?php include 'includes/main-content.php'; ?>
+<?php include 'includes/footer.php'; ?>
+
+This will ensure `index.php` simply acts as the layout orchestrator and loads the content from the correct modular files.
+
+Caution:
+--------
+- Do not remove any PHP logic related to session control, configuration, or backend handlers that must stay in `index.php`.
+- If unsure, keep those above the `include` calls.
+
+Verification:
+-------------
+After saving:
+- Load the page and confirm it renders without PHP errors.
+- Ensure CSS and JS are loading.
+- Confirm that all modular pieces display in the correct order (header, sidebar, content, footer).
+
+Backup:
+-------
+Before applying the includes, save the current `index.php` as `index-backup.php` to preserve the original for safety.
+
+Conclusion:
+-----------
+This final step connects the modularized files into your application. Once done, you’ll have a clean structure that’s easier to maintain, style, and debug.

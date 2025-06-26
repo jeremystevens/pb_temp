@@ -1,0 +1,108 @@
+
+✅ **INSTRUCTIONS FOR REPLIT: Finalizing Zero-Knowledge Paste Experience**
+
+---
+
+### 🛠️ PART 1: Fix the "Copy URL" Button in the Zero-Knowledge Modal
+
+**Issue:**  
+The "Copy" button in the Zero-Knowledge confirmation modal is non-functional and provides no user feedback.
+
+**Fix Steps:**
+
+1. Locate the JS file handling paste creation events (likely `paste-form.js` or `main.js`).
+
+2. Add the following logic to wire up the copy button:
+
+```js
+document.querySelector('#zk-copy-btn')?.addEventListener('click', function () {
+    const urlInput = document.querySelector('#zk-url');
+    if (urlInput) {
+        urlInput.select();
+        document.execCommand('copy');
+
+        // Optional: show confirmation toast
+        const toast = document.createElement('div');
+        toast.innerText = '🔗 URL copied to clipboard!';
+        toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+    }
+});
+```
+
+3. Ensure the modal markup has:
+
+```html
+<input id="zk-url" type="text" value="https://example.com/abc123#zk=..." readonly />
+<button id="zk-copy-btn">Copy</button>
+```
+
+---
+
+### 🛠️ PART 2: Enable Paste Decryption on View
+
+**Issue:**  
+When visiting a paste URL with `#zk=<encryption-key>` fragment, the encrypted content is **not decrypted**.
+
+**Fix Steps:**
+
+1. Include CryptoJS and custom decrypt logic in your paste view page:
+
+```html
+<script src="/js/crypto-js.min.js"></script>
+<script src="/js/zk-decrypt.js"></script>
+```
+
+2. Add this to `/js/zk-decrypt.js`:
+
+```js
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash;
+  if (hash.startsWith('#zk=')) {
+    const key = decodeURIComponent(hash.slice(4));
+    const encryptedElem = document.querySelector('[data-encrypted]');
+    if (encryptedElem) {
+      try {
+        const decrypted = CryptoJS.AES.decrypt(encryptedElem.dataset.encrypted, key).toString(CryptoJS.enc.Utf8);
+        encryptedElem.innerText = decrypted;
+        encryptedElem.classList.remove('opacity-50');
+      } catch (e) {
+        encryptedElem.innerText = '🔐 Failed to decrypt paste. Please check the URL.';
+      }
+    }
+  }
+});
+```
+
+3. Replace your paste output with encrypted indicator:
+
+```php
+<pre data-encrypted="<?= htmlspecialchars($paste['content']) ?>" class="opacity-50 font-mono bg-gray-800 text-white p-4 rounded">
+  Decrypting...
+</pre>
+```
+
+---
+
+### 💡 OPTIONAL UI IMPROVEMENTS
+
+- 🔐 Add a badge near the paste title:
+```html
+<span class="bg-green-600 text-white text-xs px-2 py-1 rounded ml-2">Encrypted</span>
+```
+
+- 🔒 Disable raw view if hash isn’t present:
+```php
+if ($paste['zero_knowledge'] && !isset($_SERVER['QUERY_STRING']) && !str_contains($_SERVER['REQUEST_URI'], '#zk=')) {
+    echo 'This encrypted paste must be accessed using the correct decryption key.';
+    exit;
+}
+```
+
+- 📢 Add a tooltip near the hash URL field:  
+  `"Share the full URL including the part after #. It contains the decryption key!"`
+
+---
+
+✅ This completes restoring full Zero-Knowledge functionality with encryption, UX feedback, and proper client-side decryption.

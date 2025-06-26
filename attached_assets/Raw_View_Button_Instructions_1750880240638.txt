@@ -1,0 +1,59 @@
+Instructions for Replit: Securing the "Raw" View for Zero-Knowledge Pastes (ZKE)
+
+Objective:
+Enhance the functionality and security of the "Raw" action button to prevent users from accessing raw encrypted content of Zero-Knowledge pastes without the decryption key.
+
+Changes Required:
+
+1. UI Button Behavior (Raw Button)
+------------------------------------
+- 🔓 For standard (non-ZKE) pastes:
+  - Open the raw paste content in a new tab (existing behavior).
+
+- 🔐 For ZKE pastes without a key present in the URL:
+  - Prevent the default action (don’t navigate anywhere).
+  - Show a red toast notification with the following text:
+    > "Content is not available. Please decrypt the paste first by including the #zk= key in the URL."
+
+- ✅ For ZKE pastes with a valid #zk= key in the URL:
+  - Allow viewing raw decrypted content in a new window (use pre-decrypted value if stored in JS memory).
+
+2. Backend Route Handling (/raw)
+-------------------------------
+- In `index.php`, update the raw viewing logic:
+  ```php
+  if (isset($_GET['view']) && isset($_GET['raw'])) {
+      $requested_id = $_GET['view'];
+      $paste = ... // Fetch paste
+
+      if ($paste['zero_knowledge']) {
+          echo "Error: Zero-Knowledge pastes cannot be accessed in raw form without the decryption key.";
+          exit;
+      }
+
+      echo $paste['content'];
+  }
+  ```
+
+3. JavaScript Logic
+--------------------
+In `paste-view.js` or wherever the view logic is initialized:
+
+- Detect if paste is zero-knowledge (e.g., via data attribute like `data-zke="true"`)
+- If yes, and URL doesn’t include `#zk=`, disable the Raw button and bind a toast warning.
+
+Example:
+```js
+if (isZKE && !window.location.hash.includes('#zk=')) {
+  document.getElementById("rawButton").addEventListener("click", (e) => {
+    e.preventDefault();
+    showToast("Content is not available. Please decrypt the paste first by including the #zk= key in the URL.", "error");
+  });
+}
+```
+
+4. Bonus: Visual Cue
+---------------------
+- Optional: add a lock icon 🔒 or tooltip to the Raw button for ZKE pastes indicating access requires a decryption key.
+
+This ensures raw paste viewing is secure, and improves user experience by providing helpful feedback rather than silent failures.

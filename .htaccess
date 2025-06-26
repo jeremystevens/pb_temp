@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Skip files and folders that actually exist
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route /Ahgk3gh to index.php?view=Ahgk3gh
+RewriteRule ^([a-zA-Z0-9]+)$ index.php?view=$1 [L,QSA]

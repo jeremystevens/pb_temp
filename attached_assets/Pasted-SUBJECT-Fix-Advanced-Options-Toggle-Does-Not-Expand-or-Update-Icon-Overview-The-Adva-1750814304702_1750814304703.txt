@@ -1,0 +1,48 @@
+SUBJECT: Fix Advanced Options Toggle – Does Not Expand or Update Icon
+
+Overview:
+---------
+The "Advanced Options" section is currently broken. It is collapsed by default (which is expected), but clicking it does **not** toggle the visibility of the advanced fields or update the icon direction. This functionality was working previously but is now likely being blocked or overridden by other JavaScript introduced during recent UI changes.
+
+Expected Behavior:
+------------------
+1. The section should be **collapsed by default**.
+2. When the user clicks "Advanced Options":
+   - The section should expand, revealing all additional fields (e.g. language, expiration, visibility, tags, password).
+   - The caret icon (▶) should rotate downward (▼).
+3. Clicking it again should collapse the section and reset the icon.
+
+Fix Instructions:
+-----------------
+1. Inspect the element with the `Advanced Options` toggle button:
+   - Ensure it has an `onclick` or `data-toggle` handler bound to it.
+   - Check that it is not being blocked by a parent `preventDefault()` or interrupted by conflicting JS.
+
+2. Restore or fix the JS function that toggles visibility:
+   - If originally in a separate file (e.g. `paste.form.js`), ensure that file is still being loaded.
+   - The handler should toggle both the `hidden` class and the caret icon class.
+
+Example logic (if lost):
+```javascript
+document.getElementById('advanced-toggle').addEventListener('click', function () {
+  const section = document.getElementById('advanced-options');
+  const icon = this.querySelector('svg');
+  section.classList.toggle('hidden');
+  icon.classList.toggle('rotate-90');
+});
+```
+
+3. Ensure the `#advanced-options` container is still in the DOM and not removed or commented out.
+
+4. Check CSS:
+   - If `.hidden` or `.collapse` classes were overwritten or renamed, visibility logic may silently fail.
+
+Validation:
+-----------
+- Click “Advanced Options” once → expands and icon points down.
+- Click again → collapses and icon rotates back.
+- Fields shown should include language, expiration, visibility, password, and tags.
+
+Conclusion:
+-----------
+This was previously working and likely broke due to JS overrides or lost bindings during layout restructuring. Please restore the expected toggle behavior and icon updates.

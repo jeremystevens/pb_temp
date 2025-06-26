@@ -1,0 +1,78 @@
+SUBJECT: Debug Load Template Modal – Not Loading After Recent Fix
+
+Overview:
+---------
+After your recent fix attempt, the "Load Template" button no longer causes the modal to appear. Console output shows "Load Template button found", but the modal does not render in the DOM or become visible.
+
+This suggests either:
+1. `createTemplateModal()` is never being called.
+2. It's called, but fails before inserting the modal into the DOM.
+3. Or the modal is inserted but styled incorrectly or offscreen.
+
+Please follow these debug instructions to trace and resolve the issue.
+
+Debug Instructions:
+-------------------
+
+1. **Add Debug Logs in `paste-form.js`**
+   Inside `createTemplateModal()`, add:
+   ```js
+   console.log("createTemplateModal called");
+   ```
+
+   Immediately after `document.body.insertAdjacentHTML(...)`, add:
+   ```js
+   console.log("Modal inserted into DOM");
+   ```
+
+2. **Update Modal Removal Logic for Safety**
+   Replace:
+   ```js
+   const existingModal = document.getElementById('templateModal');
+   if (existingModal) {
+       existingModal.remove();
+   }
+   ```
+
+   With:
+   ```js
+   try {
+       const existingModal = document.getElementById('templateModal');
+       if (existingModal) {
+           existingModal.remove();
+           console.log("Removed old modal");
+       }
+   } catch (e) {
+       console.warn("Modal removal failed:", e);
+   }
+   ```
+
+3. **Ensure `createTemplateModal()` Is Called**
+   Inside `window.loadTemplate`, after checking/removing existing modal, make sure:
+   ```js
+   createTemplateModal();
+   ```
+
+   is still being called unconditionally.
+
+4. **Verify Element ID Exists**
+   After the modal is inserted, add:
+   ```js
+   const modalEl = document.getElementById('templateModal');
+   console.log("Modal exists in DOM:", !!modalEl);
+   ```
+
+Validation:
+-----------
+- Open devtools console.
+- Click "Load Template".
+- You should see logs in this order:
+  1. "Load Template button found"
+  2. "createTemplateModal called"
+  3. "Removed old modal" (if applicable)
+  4. "Modal inserted into DOM"
+  5. "Modal exists in DOM: true"
+
+Conclusion:
+-----------
+This logging will reveal whether the modal insertion fails silently or if there is a CSS or DOM-level issue blocking it from rendering. Please apply and observe console behavior on click.

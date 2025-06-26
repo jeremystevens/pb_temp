@@ -1,0 +1,51 @@
+Overview:
+---------
+The "Load Template" button is currently functioning, but only inserts Python code into the content area without presenting the user with the expected modal for language selection.
+
+The original behavior (as shown in the screenshot) allowed users to choose from a list of the 10 most popular programming languages via a modal. When the user selected a language and clicked "Load", a useful starter snippet specific to that language was inserted into the editor.
+
+Required Behavior:
+------------------
+1. On clicking the "Load Template" button:
+   - A modal dialog should open.
+   - It should display buttons for the following languages:
+     - Python, JavaScript, PHP, C++, Java, Go, Ruby, Rust, C#, Swift
+
+2. When the user selects a language and clicks "Load":
+   - The corresponding starter template should be injected into the `#content` textarea.
+   - The modal should close after insertion.
+
+3. The modal should have a `Load` button and a `Close (X)` option in the corner.
+
+Frontend Requirements:
+----------------------
+- Add a modal to the DOM that is hidden by default and toggled on button click.
+- Use classes consistent with your UI system (e.g. `.modal`, `.modal-open`, `.btn`, `.btn-primary`).
+- Highlight the selected language button using a `.selected` or `.active` class.
+
+JavaScript Logic:
+-----------------
+- Track the selected language.
+- Map language names to predefined starter templates.
+- Insert the corresponding template into the content area when the user clicks "Load".
+
+Example starter templates (minimal form):
+```javascript
+const templates = {
+  "JavaScript": "// JavaScript Starter\nfunction main() {\n  console.log('Hello, World!');\n}",
+  "Python": "# Python Starter\ndef main():\n  print('Hello, World!')",
+  "PHP": "<?php\n// PHP Starter\necho 'Hello, World!';",
+  ...
+};
+```
+
+Validation:
+-----------
+- Clicking "Load Template" opens the modal.
+- Clicking a language highlights it.
+- Clicking "Load" inserts that language's code into the content box.
+- Modal closes after insertion.
+
+Conclusion:
+-----------
+Please replace the hardcoded Python-only insertion with the complete language selection modal and associated logic, restoring the behavior seen in the original interface.

@@ -1,0 +1,56 @@
+
+TO: Replit Team
+SUBJECT: Restore Full Paste Creation Logic from Original index.php (Now index-backup.php)
+
+Overview:
+---------
+Currently, clicking the "Create Paste" button at the bottom of the form does nothing. This is because **all of the original paste creation logic** — including handling advanced features like zero-knowledge encryption and burn-after-read — was previously embedded in the monolithic `index.php` file.
+
+That file has now been renamed to `index-backup.php`, but the business logic inside it has **not been reconnected** to the modularized layout.
+
+This is a critical issue.
+
+Importance:
+-----------
+The paste creation system was not just a simple POST handler — it included:
+- Support for multiple paste types (e.g. public, unlisted, password-protected)
+- Burn-after-read functionality
+- Zero-knowledge encryption (ZK paste via blur/focus encryption on the client side)
+- Handling of expiration, visibility, syntax highlighting, language selection
+- Secure generation of unique paste IDs
+- Server-side sanitation and validation
+- Error handling and redirection
+
+Instructions:
+-------------
+
+1. **Review the entire paste handling logic in `index-backup.php`**
+   - Locate all logic tied to handling form submission (`$_POST`), especially blocks like:
+     ```php
+     if ($_SERVER['REQUEST_METHOD'] === 'POST') { ... }
+     ```
+   - Identify how zero-knowledge encryption is handled (via JS + Base64).
+   - Check how passwords, expiration time, syntax highlighting, and visibility flags are passed and processed.
+
+2. **Extract the full paste creation logic into a separate handler**
+   - For maintainability, extract it to a file like `create-paste.php` or `submit-paste.php`.
+   - Route form submissions to that file using `action="create-paste.php"` in the form tag.
+   - Include all the conditional logic to support:
+     - Plain vs. ZK vs. Burn-after-read pastes
+     - Input validation
+     - Proper redirect to `/view/{pasteid}` after successful creation
+
+3. **Ensure compatibility with the new layout**
+   - Match all field names (`name="..."`) between the new form and the original logic.
+   - Ensure JS triggers and encryption logic are properly loaded (e.g., `paste.js`, `encrypt.js` if applicable).
+   - Maintain existing redirect behavior, success messages, and failure handling.
+
+4. **Re-test full submission flow**
+   - Create a plain paste
+   - Create a zero-knowledge paste (blur → encrypt → submit → view decrypted)
+   - Create a burn-after-read paste (submit → open once → verify deletion)
+   - Test password-protected and tag-assigned pastes
+
+Conclusion:
+-----------
+The Create Paste button must be wired back to all the intelligent logic that previously existed in `index.php`. Without this, the new UI is functionally broken. Please prioritize reconnecting all this logic to restore core application functionality.

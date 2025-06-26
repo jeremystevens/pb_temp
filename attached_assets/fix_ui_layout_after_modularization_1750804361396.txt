@@ -1,0 +1,43 @@
+
+TO: Replit Team
+SUBJECT: UI Layout Broken After Modularization – Restore Original "Create Paste" Form Layout
+
+Overview:
+---------
+After modularizing `index.php`, the layout of the "Create New Paste" form is no longer rendering correctly. The visual regression is confirmed via comparison screenshots:
+- The original version (expected) shows a well-aligned form with groups, spacing, icons, and interactive elements.
+- The current (broken) version shows compressed, poorly spaced inputs and is missing formatting structure.
+
+Issue:
+------
+This regression was likely introduced during the migration of form HTML from `index.php` to `includes/main-content.php`, resulting in one or more of the following:
+- Missing layout wrapper divs (e.g., `.container`, `.form-card`, `.layout-stack`)
+- Dropped CSS classes for alignment or spacing
+- Improper nesting of form fields inside containers
+- Loss of headings, section labels, and flex/grid wrappers
+
+Fix Instructions:
+-----------------
+1. Open `includes/main-content.php`
+2. Review the full structure of the form against the original working version (from before modularization).
+3. Ensure the following layout structure and class patterns are applied:
+
+   - Main form container should use:
+     - `.container`, `.form-card`, or `.section-lg` class to wrap the form
+     - `.layout-stack` or `.layout-form` to organize elements vertically with spacing
+   - Input fields must include proper labels and are grouped with descriptive divs
+   - Fieldsets like language, expiration, and checkboxes should remain within logical block-level groupings with paddings
+   - The Zero-Knowledge checkbox, burn-after-reading, and visibility options must remain in their own structured block, not pushed below the form
+
+4. Restore any lost button styles, tooltips, or icons if removed from the original structure.
+5. Verify that all form fields (Title, Content, Options, Tags, Visibility, Password, Submit) remain functional and follow visual alignment rules.
+
+Validation:
+-----------
+- Open the `/` route and confirm the layout exactly matches the original (first screenshot).
+- Compare spacing, padding, and alignment across all screen sizes.
+- Test interactive options: Zero-Knowledge Paste, Expiration, Tags, and Password
+
+Conclusion:
+-----------
+This layout regression breaks usability and must be fixed by carefully comparing the old form layout (working design) with the current modularized version. Restore lost structure, class usage, and spacing rules in `main-content.php` to match the original UI/UX.

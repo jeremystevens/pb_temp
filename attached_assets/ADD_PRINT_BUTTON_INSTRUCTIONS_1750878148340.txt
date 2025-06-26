@@ -1,0 +1,46 @@
+
+Instructions for Replit: Add Print Button for Paste Viewer
+
+🛠️ Objective:
+Reintroduce the "Print" button functionality in the paste view page to match the original design (pre-modularization). The new layout already includes a "Copy" button — this update should add a working "Print" button beside it.
+
+📍 Location:
+This logic should be added inside the paste viewing template — most likely inside `includes/view-paste.php`, near the current copy button (see red-circled area in the reference screenshot).
+
+✅ Requirements:
+
+1. Add a "Print" Button:
+- Use a button element or styled anchor tag next to the "Copy" button.
+- Match styling with the existing "Copy" button for visual consistency.
+- Label: Print (with a printer icon, if available via Font Awesome or similar).
+
+2. Attach JavaScript Print Logic:
+```html
+<script>
+function printContent() {
+  const content = document.querySelector(".code-content-container"); // Adjust selector if needed
+  const printWindow = window.open("", "_blank");
+  printWindow.document.write("<html><head><title>Print Paste</title></head><body>");
+  printWindow.document.write("<pre>" + content.innerText + "</pre>");
+  printWindow.document.write("</body></html>");
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  printWindow.close();
+}
+</script>
+```
+
+- Ensure the `.code-content-container` accurately targets the code view section only.
+- Call `printContent()` when the "Print" button is clicked.
+
+3. UI Enhancements:
+- Add a tooltip/title on hover: `Print this paste`.
+- Ensure the button is hidden when the paste content is not available or encrypted (zero-knowledge mode without decryption).
+
+📋 Bonus: Improve Copy Button UX (optional)
+- If not already present, display a small toast or inline message: “✅ Copied to clipboard!”
+
+📎 Summary:
+This change restores full usability parity with the legacy design and improves user experience for people who want to print the paste or archive it physically.
+

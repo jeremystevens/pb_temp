@@ -1,0 +1,30 @@
+📌 Sidebar Layout Adjustment for Recent Pastes Display
+
+Issue:
+In the current sidebar view under "Recent Pastes", the paste title and the author's name are being rendered on the same line, which results in the author's name being truncated when the title is long.
+
+Current format (on one line):
+[icon] "Paste Title" by Author
+
+🛠️ Fix Needed:
+We want to restructure the layout so that the paste title and the author appear on two separate lines for better readability.
+
+✅ Desired Format:
+Line 1: [icon] "Paste Title"
+Line 2: by Anonymous (or username), smaller font
+
+🎯 Implementation Steps:
+1. Locate the file that renders the Recent Pastes sidebar (likely in includes/sidebar.php).
+2. Modify the display logic to separate the paste title and author name into different lines.
+3. Use Tailwind or utility classes to format the author line with:
+   - Smaller font (e.g., text-sm)
+   - Subdued color (e.g., text-gray-400 or text-slate-400)
+
+🧪 Example HTML structure:
+<div class="font-medium truncate text-gray-100">"<?= htmlspecialchars($p['title']) ?>"</div>
+<div class="text-sm text-gray-400">by <?= $p['username'] ? '@' . htmlspecialchars($p['username']) : 'Anonymous' ?></div>
+
+4. Keep everything else (views, expiration, time ago) exactly as is.
+
+📐 Result:
+This will make each paste entry more readable and ensure usernames are not cut off, especially when titles are long.

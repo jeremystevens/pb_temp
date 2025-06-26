@@ -1,0 +1,48 @@
+
+TO: Replit Team
+SUBJECT: Final Fix for SQL Datatype Mismatch – created_at and expire_time Must Be Integers
+
+Overview:
+---------
+The datatype mismatch error persists because of a silent conflict between data passed to the SQL statement and the SQLite schema. After dumping the values and inspecting the table schema, we identified the true problem.
+
+Problem Fields:
+---------------
+1. **created_at**
+   - Schema type: INTEGER
+   - Currently passed as: string (via `date('Y-m-d H:i:s')`)
+   - Fix: Use `time()` to pass a Unix timestamp (integer)
+
+2. **expire_time**
+   - Schema type: INTEGER
+   - Ensure this is either a Unix timestamp or explicitly `null`
+
+Required Fixes:
+---------------
+
+**Replace:**
+```php
+$created_at = date('Y-m-d H:i:s');
+```
+
+**With:**
+```php
+$created_at = time();
+```
+
+**Ensure for `expire_time`:**
+```php
+$expire_time = isset($_POST['expire_time']) && is_numeric($_POST['expire_time']) ? (int)$_POST['expire_time'] : null;
+```
+
+This guarantees both fields will be passed as valid integers, matching the database schema.
+
+Validation:
+-----------
+- No more PDOException for datatype mismatch
+- Paste creation works for all configurations (ZK, burn-after-read, etc.)
+- Timestamps are correctly stored as integers
+
+Conclusion:
+-----------
+This is the final critical step to fully restore functional paste creation without schema mismatch. Please apply immediately and confirm success.

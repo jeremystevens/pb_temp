@@ -1,0 +1,39 @@
+
+TO: Replit Team
+SUBJECT: Fix SQL Datatype Mismatch in index.php – Ensure Boolean Fields Are Properly Cast
+
+Overview:
+---------
+The current version of `index.php` is failing with a fatal error:
+
+  SQLSTATE[HY000]: General error: 20 datatype mismatch
+
+This occurs during execution of the SQL `INSERT INTO pastes (...)` query, specifically on the line:
+
+  $stmt->execute([$uniqueid, $title, $encryptedContent, $syntax, $expire_time, $password, $burn_after_read, $zero_knowledge, $created_at]);
+
+Root Cause:
+-----------
+The variables `$burn_after_read` and `$zero_knowledge` are either undefined or are not explicitly cast to integers before being passed to the SQL statement.
+
+SQLite requires strict typing. These fields must be passed as integers (0 or 1), not booleans (`true`/`false`), strings (`"true"`/`"false"`), or nulls.
+
+Required Fix:
+-------------
+Before the `$stmt->execute(...)` call, add:
+
+```php
+$burn_after_read = !empty($_POST['burn_after_read']) ? 1 : 0;
+$zero_knowledge = !empty($_POST['zero_knowledge']) ? 1 : 0;
+```
+
+This guarantees that these values are passed as valid integers (`0` or `1`) into the database.
+
+Validation:
+-----------
+- After the fix, the SQL `INSERT` should succeed without datatype mismatch errors.
+- Paste creation should work for all types: standard, burn-after-read, and zero-knowledge.
+
+Conclusion:
+-----------
+Please apply this simple but critical fix to restore paste submission functionality and resolve the PDOException.

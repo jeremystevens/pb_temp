@@ -1,0 +1,56 @@
+
+TO: Replit Team
+SUBJECT: Fix Time Display Formatting and Restore Expiration Countdown
+
+Overview:
+---------
+After successful paste creation and routing updates, there are two minor but important UI issues on the main page related to time formatting and expiration behavior.
+
+Issue 1: Inaccurate "time ago" formatting
+-----------------------------------------
+Currently showing incorrect output like:
+    "675 months ago"
+
+Cause:
+- This occurs when `created_at` is stored as a Unix timestamp but rendered without proper formatting.
+- Likely using raw timestamp differences without converting them into human-readable ranges.
+
+Required Fix:
+- Use a proper time-diff-to-string function (JavaScript or PHP depending on renderer).
+- Rules:
+  - If under 60 seconds: “Just now”
+  - Under 60 minutes: “X minutes ago”
+  - Under 24 hours: “X hours ago”
+  - Under 30 days: “X days ago”
+  - Under 360 days: “X months ago”
+  - Over 360 days: “X years ago”
+
+Use libraries like `dayjs`, `moment.js`, or custom formatters.
+
+Issue 2: Expiration Countdown Says “Calculating...”
+-----------------------------------------------------
+Expected: A real-time countdown showing “This paste will expire in X minutes/hours/days”
+
+Cause:
+- The expiration logic is likely missing or detached from DOM.
+- In the original index file, this countdown was rendered based on the `expire_time` timestamp using JS intervals.
+
+Required Fix:
+1. Check if `expire_time` is not NULL.
+2. If it exists, calculate remaining seconds using:
+   ```js
+   const expireTimestamp = <PHP inject>;
+   const remaining = expireTimestamp - Math.floor(Date.now() / 1000);
+   ```
+3. Use `setInterval()` to update DOM element every second.
+
+Output format:
+  - "Expires in 13 minutes"
+  - "Expires in 4 hours"
+  - "Expires in 2 days"
+
+If expired: “Expired”
+
+Conclusion:
+-----------
+Both of these time-related bugs affect user clarity and trust. Please apply robust timestamp-to-human conversion logic and restore the live expiration countdown.

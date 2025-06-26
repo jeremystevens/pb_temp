@@ -1,0 +1,79 @@
+
+TO: Replit Team
+SUBJECT: SQL Datatype Mismatch Persists – Add Debugging to Identify Invalid Types
+
+Overview:
+---------
+The error persists despite the previous fix:
+
+  SQLSTATE[HY000]: General error: 20 datatype mismatch
+  Line: index.php:108
+
+This means at least one of the values in the SQL INSERT query does not match its expected column type in the SQLite schema. Let's resolve this definitively by logging all variables and ensuring strict typing.
+
+Instructions:
+
+1. **Add a Logging Block Before `$stmt->execute(...)`**
+Insert the following just before line 108:
+
+```php
+var_dump([
+  'uniqueid' => $uniqueid,
+  'title' => $title,
+  'content' => $encryptedContent,
+  'syntax' => $syntax,
+  'expire_time' => $expire_time,
+  'password' => $password,
+  'burn_after_read' => $burn_after_read,
+  'zero_knowledge' => $zero_knowledge,
+  'created_at' => $created_at
+]);
+exit;
+```
+
+This will show actual values and types, helping to identify which one is invalid.
+
+2. **Explicitly Cast Boolean Fields**
+Ensure the following lines are present **before** the SQL execution:
+
+```php
+$burn_after_read = isset($_POST['burn_after_read']) ? 1 : 0;
+$zero_knowledge = isset($_POST['zero_knowledge']) ? 1 : 0;
+```
+
+3. **Sanitize Optional Fields**
+Ensure nullable or optional values like password and expiration do not send empty strings when a NULL is expected:
+
+```php
+$expire_time = $expire_time ?: null;
+$password = $password ?: null;
+```
+
+4. **Confirm Database Column Types**
+Please double-check the SQLite schema for the `pastes` table. It should match the expected values:
+
+```sql
+CREATE TABLE pastes (
+  uniqueid TEXT,
+  title TEXT,
+  content TEXT,
+  syntax TEXT,
+  expire_time TEXT OR INTEGER,
+  password TEXT,
+  burn_after_read INTEGER,
+  zero_knowledge INTEGER,
+  created_at TEXT
+);
+```
+
+Make sure `burn_after_read` and `zero_knowledge` are INTEGER columns and not TEXT.
+
+Validation:
+-----------
+After applying the fix and dumping variables:
+- You should see only valid types (`int`, `string`, `null`).
+- Once types are confirmed valid, remove the dump block and retry paste creation.
+
+Conclusion:
+-----------
+This diagnostic logging will identify exactly which variable is violating SQLite type rules. Please perform this step and report back with the dumped values if the error still occurs.

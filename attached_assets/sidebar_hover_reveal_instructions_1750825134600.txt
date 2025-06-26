@@ -1,0 +1,62 @@
+
+TO: Replit Team
+SUBJECT: Implement Auto-Hiding Sidebar Reveal on Mouse Hover (Inspired by Bolt.new)
+
+Overview:
+---------
+The sidebar is currently always visible on the homepage. In the original design, users could click a chevron to hide or show the sidebar. We now want to modernize this UX by making the sidebar behave like the one on https://bolt.new.
+
+Desired Behavior:
+-----------------
+- The sidebar remains hidden by default.
+- When the user's mouse moves to the far left edge of the screen (e.g. within 20px of the window’s left boundary), the sidebar slides in.
+- When the mouse leaves the sidebar or returns to the main content, the sidebar hides again.
+- There should be a short delay (e.g. 100–200ms) before hiding to avoid flicker.
+
+Implementation Instructions:
+----------------------------
+1. **CSS**
+   - Set the sidebar to be positioned off-screen by default:
+     ```css
+     .sidebar {
+       position: fixed;
+       top: 0;
+       left: -260px; /* Hidden off screen */
+       width: 250px;
+       transition: left 0.3s ease;
+       z-index: 999;
+     }
+
+     .sidebar.show {
+       left: 0;
+     }
+     ```
+
+2. **JavaScript**
+   Add hover detection script:
+   ```js
+   const sidebar = document.querySelector('.sidebar');
+
+   document.addEventListener('mousemove', function (e) {
+     if (e.clientX <= 20) {
+       sidebar.classList.add('show');
+     } else if (!sidebar.matches(':hover')) {
+       sidebar.classList.remove('show');
+     }
+   });
+
+   sidebar.addEventListener('mouseleave', () => {
+     sidebar.classList.remove('show');
+   });
+   ```
+
+3. **Ensure Accessibility**
+   - Ensure sidebar remains keyboard-navigable when expanded.
+   - Add appropriate ARIA attributes if needed.
+
+4. **Optional**
+   - Add a minimal visual cue (e.g. a vertical bar/line at the edge) that indicates the presence of the sidebar when hidden.
+
+Conclusion:
+-----------
+This mouse-activated sidebar provides a modern and seamless experience like bolt.new, improves screen space, and eliminates the need for a manual toggle button.
