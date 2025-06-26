@@ -26,6 +26,21 @@ $theme = $_COOKIE['theme'] ?? 'dark';
             box-sizing: border-box;
             word-break: break-word;
         }
+
+        body {
+            font-size: 1em;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
