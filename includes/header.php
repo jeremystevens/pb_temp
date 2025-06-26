@@ -362,7 +362,7 @@ $theme = $_COOKIE['theme'] ?? 'dark';
             <i class="fas fa-paste text-2xl"></i>
             <span class="text-xl font-bold">PasteForge</span>
           </a>
-            <button @click="mobileMenu = !mobileMenu" class="lg:hidden p-2">
+            <button @click="mobileMenu = !mobileMenu" onclick="toggleNav()" class="lg:hidden p-2">
               <i class="fas fa-bars"></i>
             </button>
           <div class="hidden lg:flex space-x-4">
@@ -376,7 +376,7 @@ $theme = $_COOKIE['theme'] ?? 'dark';
             <?php endif; ?>
           </div>
         </div>
-        <div x-show="mobileMenu" @click.away="mobileMenu = false" class="lg:hidden flex flex-col space-y-2 pb-4">
+        <div id="navLinks" x-show="mobileMenu" @click.away="mobileMenu = false" class="lg:hidden flex flex-col space-y-2 pb-4" style="display: none;">
           <a href="/" class="hover:bg-blue-700 px-3 py-2 rounded">Home</a>
           <a href="?page=archive" class="hover:bg-blue-700 px-3 py-2 rounded">Archive</a>
           <a href="/?page=projects" class="hover:bg-blue-700 px-3 py-2 rounded">Projects</a>

@@ -276,5 +276,12 @@ if (document.getElementById('latest-pastes')) {
 <!-- Custom JavaScript -->
     <script src="/includes/paste-form.js"></script>
     <script src="/includes/zk-decrypt.js"></script>
+    <script>
+    function toggleNav() {
+      const links = document.getElementById("navLinks");
+      if (!links) return;
+      links.style.display = (links.style.display === "block") ? "none" : "block";
+    }
+    </script>
 </body>
 </html>
