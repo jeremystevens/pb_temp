@@ -54,3 +54,15 @@
     box-sizing: border-box;
 }
 
+/* Improve typography and button tap targets on small screens */
+@media (max-width: 480px) {
+    body {
+        font-size: 1.1em;
+    }
+
+    button, .top-buttons button {
+        padding: 10px;
+        font-size: 1em;
+    }
+}
+
