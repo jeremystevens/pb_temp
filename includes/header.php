@@ -125,7 +125,7 @@ $theme = $_COOKIE['theme'] ?? 'dark';
   /* Responsive statistics grid */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
   }
 
