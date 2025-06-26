@@ -105,6 +105,21 @@ $theme = $_COOKIE['theme'] ?? 'dark';
       background-color: rgba(147, 51, 234, 0.1);
     }
 
+    /* Metadata and tag layout */
+    .meta-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      font-size: 0.9em;
+    }
+
+    .meta-info .tag {
+      white-space: nowrap;
+      background: #2c2f33;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
   </style>
   <script>
     // Countdown timer initialization

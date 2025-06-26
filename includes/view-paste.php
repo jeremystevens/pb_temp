@@ -61,7 +61,7 @@ function time_ago($timestamp) {
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white truncate">
                         <?= htmlspecialchars($paste['title']) ?>
                     </h1>
-                    <div class="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div class="meta-info items-center text-gray-600 dark:text-gray-400 mt-2">
                         <span class="flex items-center gap-1">
                             <i class="fas fa-user"></i>
                             <?= $paste['author_username'] ? '@'.htmlspecialchars($paste['author_username']) : 'Anonymous' ?>
@@ -84,20 +84,16 @@ function time_ago($timestamp) {
                             <span class="countdown-timer">Calculating...</span>
                         </span>
                         <?php endif; ?>
+                        <?php if (!empty($paste['tags'])): ?>
+                            <?php foreach (explode(',', $paste['tags']) as $tag): ?>
+                                <?php if (trim($tag)): ?>
+                                    <a href="/?search=<?= urlencode(trim($tag)) ?>" class="tag">
+                                        #<?= htmlspecialchars(trim($tag)) ?>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
-
-                    <!-- Paste Tags -->
-                    <?php if (!empty($paste['tags'])): ?>
-                    <div class="mt-3 flex flex-wrap gap-2">
-                        <?php foreach (explode(',', $paste['tags']) as $tag): ?>
-                            <?php if (trim($tag)): ?>
-                                <a href="/?search=<?= urlencode(trim($tag)) ?>" class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                    #<?= htmlspecialchars(trim($tag)) ?>
-                                </a>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php endif; ?>
                 </div>
 
                 <!-- Action Buttons -->
