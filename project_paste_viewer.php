@@ -163,6 +163,18 @@ $theme = $_COOKIE['theme'] ?? 'dark';
             border-left-color: #3b82f6;
             background-color: rgba(59, 130, 246, 0.05);
         }
+        .top-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+
+        @media (max-width: 480px) {
+            .top-buttons button {
+                flex: 1 1 100%;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -246,7 +258,7 @@ $theme = $_COOKIE['theme'] ?? 'dark';
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-3">
+                <div class="top-buttons items-center">
                     <!-- Add to Chain Button -->
                     <a href="/?parent_id=<?= $paste_id ?>" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm inline-flex items-center">
                         <i class="fas fa-link mr-2"></i>Add to Chain
